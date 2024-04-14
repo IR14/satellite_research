@@ -1,0 +1,15 @@
+rxinfo:
+  channel: 1
+  coderate: "4/5"
+  crcStatus: 1
+  dataRate:
+    bandwidth: 125
+    modulation: "LORA"
+    spreadFactor: 7
+  frequency: 868300000
+  loRaSNR: 7
+  mac: "1dee08d0b691d149"
+  rfChain: 1
+  rssi: -57
+  size: 23
+  timestamp: 2074240683

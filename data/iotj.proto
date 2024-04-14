@@ -1,0 +1,46 @@
+//*
+//This code uses Ivan Lysogor's library
+//https://github.com/ivanlysogor/SBD_IORT
+//
+//Compile:
+//export SRC_DIR=data
+//export DST_DIR=data
+//protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/iotj.proto
+//*/
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message phypayload {
+  repeated float data = 1;
+}
+
+message rate {
+  int32 bandwidth = 1;
+  enum mod {
+    LORA = 0;
+  }
+  mod modulation = 2;
+  int32 spreadFactor = 7;
+}
+
+message info {
+  int32 channel = 1;
+  string codeRate = 2;
+  int32 crcStatus = 3;
+  rate dataRate = 4;
+  int64 frequency = 5;
+  float loRaSNR = 6;
+  string mac = 7;
+  int32 rfChain = 8;
+  sint32 rssi = 9;
+  int32 size = 10;
+  google.protobuf.Timestamp time = 11;
+  google.protobuf.Timestamp timestamp = 12;
+}
+
+message iotj {
+  string phyPayload = 1;
+  info rxinfo = 2;
+}
