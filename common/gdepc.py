@@ -1,5 +1,4 @@
 import huffman
-from data import iotj_pb2
 
 from typing import Union
 

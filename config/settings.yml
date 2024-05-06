@@ -1,3 +1,16 @@
+broker:
+  address: "localhost"
+  port: 1883
+  topic: "test/topic"
+  timeout: 1
+
+publish_topic:
+  address: "localhost"
+  port: 1883
+  topic: "test/publish_topic"
+  timeout: 1
+
 position: [37.410161, 55.803218, 150]
 operation_group: "iridium-NEXT"
-tle_url: "https://celestrak.org/NORAD/elements/gp.php"
+data_url: "https://celestrak.org/NORAD/elements/gp.php"
+data_format: "tle"

@@ -1,0 +1,6 @@
+broker:
+  address: "localhost"
+  port: 1883
+  topic: "test/topic"
+  timeout: 1
+file_to_publish: "datasets/iot_temp.csv"

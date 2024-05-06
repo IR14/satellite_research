@@ -105,22 +105,3 @@ def calculate_compressed_size_in_bytes(encoded_data):
     size_in_bits = len(encoded_data)
     size_in_bytes = (size_in_bits + 7) // 8
     return size_in_bytes
-
-
-# # data = "this is an example of a huffman tree with extended dictionary capabilities."
-# data = "this is an example of a huffman tree with extended dictionary capabilities."
-# # data = "this is an example of a huffman tree"
-# huffman = ExtendedHuffman()
-#
-# encoded_data, code_book = huffman.encode(data)
-# print("Encoded:", encoded_data)
-#
-# decoded_data = huffman.decode(encoded_data, code_book)
-# print("Decoded:", decoded_data)
-#
-# original_size = calculate_size_in_bytes(data)
-# compressed_size = calculate_compressed_size_in_bytes(encoded_data)
-#
-# print("Original size:", original_size, "bytes")
-# print("Compressed size:", compressed_size, "bytes")
-# print("Compression ratio:", original_size / compressed_size)

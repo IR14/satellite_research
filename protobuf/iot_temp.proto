@@ -1,0 +1,24 @@
+//*
+//Compile:
+//export SRC_DIR=protobuf
+//export DST_DIR=protobuf
+//protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/iot_temp.proto
+//*/
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message LogEntry {
+  string entity = 1;
+  string user = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  int32 temperature = 4;
+  enum Status {
+    In = 0;
+    Out = 1;
+  }
+  Status status = 5;
+}
+
+
