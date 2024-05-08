@@ -1,0 +1,44 @@
+//*
+//Compile:
+//export SRC_DIR=protobuf
+//export DST_DIR=protobuf
+//protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/beach_water.proto
+//*/
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message WaterMetrics {
+  string beach = 1;
+  string timestamp = 2;
+  float temperature = 3;
+  float turbidity = 4;
+  float transducer_depth = 5;
+  float wave_height = 6;
+  float wave_period = 7;
+  float battery_life = 8;
+  string timestamp_m = 9;
+  string id = 10;
+}
+
+message WaterMetricsNormal {
+  enum BeachName {
+    MONTROSE_BEACH = 0;
+    OHIO_STREET_BEACH = 1;
+    CALUMET_BEACH = 2;
+    STREET_BEACH_63RD = 3;
+    OSTERMAN_BEACH = 4;
+    RAINBOW_BEACH = 5;
+  }
+  BeachName beach = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  float temperature = 3;
+  float turbidity = 4;
+  float transducer_depth = 5;
+  float wave_height = 6;
+  float wave_period = 7;
+  float battery_life = 8;
+  int32 id = 9;
+}
+

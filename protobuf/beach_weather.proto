@@ -1,0 +1,57 @@
+//*
+//Compile:
+//export SRC_DIR=protobuf
+//export DST_DIR=protobuf
+//protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/beach_weather.proto
+//*/
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message BeachWeatherMetrics {
+    string station_name = 1;
+    string measurement_timestamp = 2;
+    float air_temperature = 3;
+    float wet_bulb_temperature = 4;
+    float humidity = 5;
+    float rain_intensity = 6;
+    float interval_rain = 7;
+    float total_rain = 8;
+    float precipitation_type = 9;
+    float wind_direction = 10;
+    float wind_speed = 11;
+    float maximum_wind_speed = 12;
+    float barometric_pressure = 13;
+    float solar_radiation = 14;
+    float heading = 15;
+    float battery_life = 16;
+    string measurement_timestamp_label = 17;
+    string measurement_id = 18;
+}
+
+message BeachWeatherMetricsNormal {
+    enum StationName {
+        OAK_STREET_WEATHER_STATION = 0;
+        FOSTER_WEATHER_STATION = 1;
+        STATION_WEATHER_STREET_63RD = 2;
+    }
+    StationName station_name = 1;
+    google.protobuf.Timestamp measurement_timestamp = 2;
+    float air_temperature = 3;
+    float wet_bulb_temperature = 4;
+    float humidity = 5;
+    float rain_intensity = 6;
+    float interval_rain = 7;
+    float total_rain = 8;
+    float precipitation_type = 9;
+    float wind_direction = 10;
+    float wind_speed = 11;
+    float maximum_wind_speed = 12;
+    float barometric_pressure = 13;
+    float solar_radiation = 14;
+    float heading = 15;
+    float battery_life = 16;
+    int32 measurement_id = 18;
+}
+

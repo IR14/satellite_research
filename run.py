@@ -29,48 +29,6 @@ consoleHandler.setLevel(logging.DEBUG)
 # rootLogger.addHandler(fileHandler)
 log.addHandler(consoleHandler)
 
-# log.setLevel(INFO)
-# logging.basicConfig(level = logging.INFO)
-
-# Get logger
-# Create a handler
-# c_handler = logging.StreamHandler()
-#
-# # link handler to logger
-# logger.addHandler(c_handler)
-#
-# # Set logging level to the logger
-# logger.setLevel(logging.DEBUG) # <-- THIS!
-
-
-
-# async def main():
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument('--config', '-c', type=str, help='Path of the config file')
-#     args = parser.parse_args()
-#
-#     if args.config:
-#         config_path = Path(args.config).resolve()
-#     else:
-#         config_path = Path(os.environ.get('CONFIG_PATH'))
-#
-#     log.info(f'Started with config: {str(config_path)}')
-#
-#     config = EngineConfig.parse_obj(load_yaml(config_path))
-#
-#     start_timestamp = datetime.now()
-#     engine = Engine(config=config)
-#     loop = asyncio.get_event_loop()
-#
-#     loop.run_until_complete(engine.init())
-#     log.debug(f'App engine initialized ({datetime.now() - start_timestamp} sec)')
-#     loop.create_task(engine.run())
-#     loop.run_forever()
-#
-#
-# if __name__ == '__main__':
-#     main()
-
 
 def main():
     parser = argparse.ArgumentParser(description='Run services with configuration')

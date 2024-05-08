@@ -1,0 +1,14 @@
+//*
+//Compile:
+//export SRC_DIR=protobuf
+//export DST_DIR=protobuf
+//protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/all_sites_combined.proto
+//*/
+
+syntax = "proto3";
+
+message ConcentrationGroup {
+    float no2 = 1;
+    float ufp = 2;
+    float bc = 3;
+}

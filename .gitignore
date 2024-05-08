@@ -13,9 +13,15 @@ venv.bak/
 # IDE
 .idea/
 .run/
+.DS_Store
+
+# local satellite model
+*.bsp
+
 
 # local datasets
 datasets/
 
 # local compiled protoc python modules
 *_pb2.py
+

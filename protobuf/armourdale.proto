@@ -1,0 +1,26 @@
+//*
+//Compile:
+//export SRC_DIR=protobuf
+//export DST_DIR=protobuf
+//protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/armourdale.proto
+//*/
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+message ConcentrationGroupDate {
+    int32 mo = 1;
+    int32 dy = 2;
+    int32 yr = 3;
+    float no2 = 4;
+    float ufp = 5;
+    float bc = 6;
+}
+
+message ConcentrationGroupDateNormal {
+    google.protobuf.Timestamp timestamp = 1;
+    float no2 = 2;
+    float ufp = 3;
+    float bc = 4;
+}

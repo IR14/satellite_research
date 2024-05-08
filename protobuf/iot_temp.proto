@@ -21,4 +21,24 @@ message LogEntry {
   Status status = 5;
 }
 
+message LogEntryNormal {
+  enum System {
+    TEMP_LOG = 0;
+  }
+  System messageSource = 1;
+  int32 tickHash = 2;
+  int64 messageHash = 3;
+  enum RoomId {
+    ROOM_ADMIN = 0;
+  }
+  RoomId user = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  int32 temperature = 6;
+  enum Status {
+    In = 0;
+    Out = 1;
+  }
+  Status status = 7;
+}
+
 

@@ -9,6 +9,7 @@ from typing import Optional, Union, List, Dict
 JsonSimpleType = Union[int, float, bool, None, str]
 JsonType = Union[JsonSimpleType, List['JSONType'], Dict[str, 'JSONType']]
 
+
 log = getLogger(__name__)
 
 
@@ -64,10 +65,6 @@ class BaseMQTTService:
         pass
 
     async def init(self):
-        # Открытие файла в отдельном потоке
-        # with self.file_to_publish.open('r') as file:
-        #     lines = await loop.run_in_executor(None, file.readlines)
-
         if self._username and self._password:
             self._client.username_pw_set(self._username, self._password)
 
