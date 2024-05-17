@@ -9,16 +9,16 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-message WaterMetrics {
+message WaterMetricsRational {
   string beach = 1;
-  string timestamp = 2;
+  google.protobuf.Timestamp timestamp = 2;
   float temperature = 3;
   float turbidity = 4;
   float transducer_depth = 5;
   float wave_height = 6;
   float wave_period = 7;
   float battery_life = 8;
-  string timestamp_m = 9;
+  google.protobuf.Timestamp timestamp_m = 9;
   string id = 10;
 }
 
@@ -39,6 +39,5 @@ message WaterMetricsNormal {
   float wave_height = 6;
   float wave_period = 7;
   float battery_life = 8;
-  int32 id = 9;
 }
 

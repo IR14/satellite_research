@@ -12,13 +12,17 @@ import "google/protobuf/timestamp.proto";
 message LogEntry {
   string entity = 1;
   string user = 2;
+  string timestamp = 3;
+  int32 temperature = 4;
+  string status = 5;
+}
+
+message LogEntryRational {
+  string entity = 1;
+  string user = 2;
   google.protobuf.Timestamp timestamp = 3;
   int32 temperature = 4;
-  enum Status {
-    In = 0;
-    Out = 1;
-  }
-  Status status = 5;
+  string status = 5;
 }
 
 message LogEntryNormal {

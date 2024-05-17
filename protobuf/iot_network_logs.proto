@@ -7,6 +7,23 @@
 
 syntax = "proto3";
 
+//message NetworkLogsRational {
+//    int32 frame_number = 1;
+//    int64 frame_time = 2;
+//    int32 frame_len = 3;
+//    int64 eth_src = 4;
+//    int64 eth_dst = 5;
+//    int64 ip_src = 6;
+//    int64 ip_dst = 7;
+//    float ip_proto = 8;
+//    float ip_len = 9;
+//    float tcp_len = 10;
+//    float tcp_srcport = 11;
+//    float tcp_dstport = 12;
+//    float value = 13;
+//    int32 normality = 14;
+//}
+
 message NetworkLogs {
     int32 frame_number = 1;
     int64 frame_time = 2;

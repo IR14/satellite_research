@@ -2,14 +2,14 @@
 //Compile:
 //export SRC_DIR=protobuf
 //export DST_DIR=protobuf
-//protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/iotpond1.proto
+//protoc -I=$SRC_DIR --python_out=$DST_DIR $SRC_DIR/iot_pond.proto
 //*/
 
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-message Pond {
+message PondRaw {
     string created_at = 1;
     int32 entry_id = 2;
     float temperature = 3;
@@ -23,7 +23,7 @@ message Pond {
     float fish_weight = 11;
 }
 
-message PondNormal {
+message PondRational {
     google.protobuf.Timestamp created_at = 1;
     int32 entry_id = 2;
     float temperature = 3;

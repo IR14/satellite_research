@@ -1,17 +1,37 @@
 from functools import wraps
 
 import json
-from common.huffman import Huffman
+# from common.huffman import Huffman
+from common.huffman_words import HuffmanAdaptiveCodebook
+from common.adaptive_huffman import AdaptiveHuffman
 
 
-def log_test_func(func):
+def adaptive_huffman_test(func):
     @wraps(func)
     def wrapper_do_twice(*args, **kwargs):
         print(f'\n$ Вызов тест-функции: {func.__name__}')
         serialized_data, raw_size = func(*args, **kwargs)
         measure_compression(serialized_data, raw_size)
+        map[func.__name__] = serialized_data
 
     return wrapper_do_twice
+
+
+dataset_map = {
+
+}
+
+
+# def huffman_with_adaptive_codebook_test(func):
+#     @wraps(func)
+#     def wrapper_do_twice(*args, **kwargs):
+#         huffman = HuffmanAdaptiveCodebook()
+#         print(f'\n$ Вызов тест-функции: {func.__name__}')
+#         serialized_data, raw_size = func(*args, **kwargs)
+#         measure_compression(serialized_data, raw_size)
+#         map[str(func.__name__)] = serialized_data
+#
+#     return wrapper_do_twice
 
 
 def calculate_size_in_bytes(data: bytes) -> int:
@@ -40,8 +60,9 @@ def calculate_json_size(json_str: str) -> int:
 
 
 def measure_compression(serialized_data: bytes, raw_size: int) -> None:
-    encoded_data, code_book = huffman.encode(serialized_data)
-    decoded_data = huffman.decode(encoded_data, code_book)
+    # encoded_data, code_book = huffman.encode(serialized_data)
+    encoded_data = AdaptiveHuffman().encode(serialized_data)
+    decoded_data = AdaptiveHuffman().decode(encoded_data)
 
     serialized_size = calculate_size_in_bytes(serialized_data)
     serialized_ratio = calculate_compression_ratio(raw_size, serialized_size)
@@ -50,19 +71,19 @@ def measure_compression(serialized_data: bytes, raw_size: int) -> None:
 
     print("Encoded:", encoded_data)
     print("Decoded:", decoded_data)
+    print("Serialized == Decoded", serialized_data == decoded_data)
     print(f"Compression ratio: {compression_ratio}")
     print(f"Serialization ratio: {serialized_ratio}")
     print(f'FINAL ratio JSON-S -> ENCODED {calculate_compression_ratio(raw_size, compressed_size)}')
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_iotj() -> [bytes, int]:
     from protobuf import iotj_pb2
-    huffman = Huffman()
 
     json_string = """
     {
-        "phyPayload":"this is an example of a huffman tree with extended dictionary capabilities",
+        "phyPayload":"This is testing message for iridium with size of 340 symbols ### Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non euismod leo, in cursus felis. Morbi porta lobortis nibh a aliquam. In consequat ultrices lectus, ut accumsan magna elementum ac. Nulla orci magna, accumsan sed tincidunt vitae tortor",
         "rxInfo":{
             "channel":1,
             "codeRate":"4/5",
@@ -100,21 +121,21 @@ def test_iotj() -> [bytes, int]:
     pb.rxinfo.size = 23
     pb.rxinfo.time.FromJsonString("2024-04-13T12:00:00Z")
     pb.rxinfo.timestamp.FromSeconds(2074240683)
-    pb.phyPayload = "this is an example of a huffman tree with extended dictionary capabilities"
+    pb.phyPayload = "This is testing message for iridium with size of 340 symbols ### Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non euismod leo, in cursus felis. Morbi porta lobortis nibh a aliquam. In consequat ultrices lectus, ut accumsan magna elementum ac. Nulla orci magna, accumsan sed tincidunt vitae tortor"
+    # pb.phyPayload = "this is an example of a huffman tree with extended dictionary capabilities"
 
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_iot_temp() -> [bytes, int]:
     from protobuf import iot_temp_pb2
-    huffman = Huffman()
 
     json_string = """
     {
         "id":"__export__.temp_log_196134_bd201015",
         "room_id/id":"Room Admin",
-        "noted_date":"08-12-2018 09:30",
+        "noted_date":"14-04-2024 12:30",
         "temp":29,
         "out/in":"In"
     }
@@ -124,23 +145,47 @@ def test_iot_temp() -> [bytes, int]:
     pb = iot_temp_pb2.LogEntry()
     pb.entity = "__export__.temp_log_196134_bd201015"
     pb.user = "Room Admin"
-    pb.timestamp.FromSeconds(2074240683)
+    pb.timestamp = "14-04-2024 12:30"
     pb.temperature = 29
     pb.status = "In"
 
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
-def test_iot_temp_normal():
+@adaptive_huffman_test
+def test_iot_temp_rational() -> [bytes, int]:
     from protobuf import iot_temp_pb2
-    huffman = Huffman()
 
     json_string = """
     {
         "id":"__export__.temp_log_196134_bd201015",
         "room_id/id":"Room Admin",
-        "noted_date":"08-12-2018 09:30",
+        "noted_date":"14-04-2024 12:30",
+        "temp":29,
+        "out/in":"In"
+    }
+    """
+    raw_size = calculate_json_size(json_string)
+
+    pb = iot_temp_pb2.LogEntryRational()
+    pb.entity = "__export__.temp_log_196134_bd201015"
+    pb.user = "Room Admin"
+    pb.timestamp.FromSeconds(1713097800)
+    pb.temperature = 29
+    pb.status = "In"
+
+    return pb.SerializeToString(), raw_size
+
+
+@adaptive_huffman_test
+def test_iot_temp_normal():
+    from protobuf import iot_temp_pb2
+
+    json_string = """
+    {
+        "id":"__export__.temp_log_196134_bd201015",
+        "room_id/id":"Room Admin",
+        "noted_date":"14-04-2024 12:30",
         "temp":29,
         "out/in":"In"
     }
@@ -158,17 +203,16 @@ def test_iot_temp_normal():
     pb.tickHash = 196134
     pb.messageHash = int("bd201015", 16)
     pb.user = user_map["Room Admin"]
-    pb.timestamp.FromSeconds(1712847600)
+    pb.timestamp.FromSeconds(1713097800)
     pb.temperature = 29
     pb.status = "In"
 
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_beach_water():
     from protobuf import beach_water_pb2
-    huffman = Huffman()
 
     json_string = """
     {
@@ -186,25 +230,24 @@ def test_beach_water():
     """
     raw_size = calculate_json_size(json_string)
 
-    pb = beach_water_pb2.WaterMetrics()
+    pb = beach_water_pb2.WaterMetricsRational()
     pb.beach = 'Montrose Beach'
-    pb.timestamp = "08/30/2013 08:00:00 AM"
+    pb.timestamp.FromSeconds(1712847600)
     pb.temperature = 20.3
     pb.turbidity = 1.18
     pb.transducer_depth = 0.891
     pb.wave_height = 0.08
     pb.wave_period = 3.0
     pb.battery_life = 9.4
-    pb.timestamp_m = "8/30/2013 8:00 AM"
+    pb.timestamp_m.FromSeconds(1712847600)
     pb.id = 'MontroseBeach201308300800'
 
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_beach_water_normal():
     from protobuf import beach_water_pb2
-    huffman = Huffman()
 
     json_string = """
     {
@@ -242,15 +285,13 @@ def test_beach_water_normal():
     pb.wave_height = 0.08
     pb.wave_period = 3.0
     pb.battery_life = 9.4
-    pb.id = 8
 
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_beach_weather():
     from protobuf import beach_weather_pb2
-    huffman = Huffman()
 
     json_string = """
     {
@@ -297,10 +338,9 @@ def test_beach_weather():
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_beach_weather_normal():
     from protobuf import beach_weather_pb2
-    huffman = Huffman()
 
     json_string = """
     {
@@ -351,10 +391,9 @@ def test_beach_weather_normal():
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
-def test_iotpond1():
-    from protobuf import iotpond1_pb2
-    huffman = Huffman()
+@adaptive_huffman_test
+def test_iot_pond():
+    from protobuf import iot_pond_pb2
 
     json_string = """
     {
@@ -373,7 +412,7 @@ def test_iotpond1():
     """
     raw_size = calculate_json_size(json_string)
 
-    pb = iotpond1_pb2.Pond()
+    pb = iot_pond_pb2.PondRaw()
     pb.created_at = "2021-06-19 00:00:05 CET"
     pb.entry_id = 1889
     pb.temperature = 24.875
@@ -389,10 +428,9 @@ def test_iotpond1():
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
-def test_iotpond1_normal():
-    from protobuf import iotpond1_pb2
-    huffman = Huffman()
+@adaptive_huffman_test
+def test_iot_pond_rational():
+    from protobuf import iot_pond_pb2
 
     json_string = """
     {
@@ -411,7 +449,7 @@ def test_iotpond1_normal():
     """
     raw_size = calculate_json_size(json_string)
 
-    pb = iotpond1_pb2.PondNormal()
+    pb = iot_pond_pb2.PondRational()
     pb.created_at.FromSeconds(1624053605)
     pb.entry_id = 1889
     pb.temperature = 24.875
@@ -427,10 +465,9 @@ def test_iotpond1_normal():
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_iot_network_logs():
     from protobuf import iot_network_logs_pb2
-    huffman = Huffman()
 
     json_string = """
     {
@@ -471,10 +508,9 @@ def test_iot_network_logs():
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_all_sites_combined():
     from protobuf import all_sites_combined_pb2
-    huffman = Huffman()
 
     json_string = """
     {
@@ -493,10 +529,9 @@ def test_all_sites_combined():
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_armourdale():
     from protobuf import armourdale_pb2
-    huffman = Huffman()
 
     json_string = """
     {
@@ -521,10 +556,9 @@ def test_armourdale():
     return pb.SerializeToString(), raw_size
 
 
-@log_test_func
+@adaptive_huffman_test
 def test_armourdale_normal():
     from protobuf import armourdale_pb2
-    huffman = Huffman()
 
     json_string = """
     {
@@ -547,9 +581,11 @@ def test_armourdale_normal():
     return pb.SerializeToString(), raw_size
 
 
-huffman = Huffman()
+map = {}
+test_iotj()
 
 test_iot_temp()
+test_iot_temp_rational()
 test_iot_temp_normal()
 
 test_beach_water()
@@ -558,8 +594,8 @@ test_beach_water_normal()
 test_beach_weather()
 test_beach_weather_normal()
 
-test_iotpond1()
-test_iotpond1_normal()
+test_iot_pond()
+test_iot_pond_rational()
 
 test_iot_network_logs()
 
@@ -567,3 +603,47 @@ test_all_sites_combined()
 
 test_armourdale()
 test_armourdale_normal()
+
+# for i, j in map.items():
+#     print(f'"{i}": {j},')
+
+
+# from protobuf import lzw_pb2
+#
+#
+# def serialize_integer_sequence(int_list):
+#     # Create an instance of the generated class
+#     sequence = lzw_pb2.IntegerSequence()
+#
+#     # Assign the integer list to the values field
+#     sequence.values.extend(int_list)
+#
+#     # Serialize to binary string
+#     serialized_data = sequence.SerializeToString()
+#     return serialized_data
+#
+#
+# def deserialize_integer_sequence(serialized_data):
+#     sequence = lzw_pb2.IntegerSequence()
+#     sequence.ParseFromString(serialized_data)
+#     return list(sequence.values)
+#
+#
+# # Example integer list from LZW compression
+# int_list = [10, 185, 2, 84, 104, 105, 115, 32, 261, 32, 116, 101, 115, 116, 105, 110, 103, 32, 109, 267, 115, 97, 103, 101, 32, 102, 111, 114, 263, 114, 105, 100, 105, 117, 109, 32, 119, 105, 116, 104, 32, 115, 105, 122, 279, 111, 102, 32, 51, 52, 48, 296, 121, 109, 98, 111, 108, 262, 35, 314, 32, 76, 282, 101, 290, 105, 112, 115, 289, 32, 100, 311, 282, 296, 293, 32, 97, 274, 116, 44, 32, 99, 111, 110, 115, 101, 99, 266, 116, 117, 283, 97, 287, 112, 261, 99, 270, 272, 101, 108, 293, 46, 32, 67, 114, 97, 262, 110, 338, 32, 101, 117, 261, 109, 111, 100, 32, 108, 101, 111, 335, 270, 336, 345, 323, 262, 102, 354, 261, 357, 77, 282, 98, 105, 32, 112, 282, 116, 97, 372, 111, 310, 114, 269, 362, 105, 98, 295, 394, 97, 355, 113, 117, 332, 357, 73, 110, 336, 338, 340, 407, 97, 116, 32, 117, 108, 116, 285, 99, 267, 372, 341, 344, 115, 335, 117, 418, 97, 99, 99, 289, 276, 412, 109, 277, 110, 394, 354, 319, 101, 110, 344, 290, 433, 357, 78, 420, 108, 394, 282, 351, 273, 440, 97, 335, 433, 435, 109, 437, 296, 101, 371, 269, 110, 351, 100, 117, 446, 32, 118, 293, 97, 279, 116, 392, 282, 18, 66, 8, 1, 18, 3, 52, 47, 53, 24, 1, 34, 4, 8, 125, 56, 7, 40, 224, 233, 132, 158, 3, 53, 0, 0, 224, 64, 58, 16, 49, 100, 101, 101, 48, 56, 100, 48, 98, 54, 57, 512, 49, 52, 57, 64, 1, 72, 113, 80, 23, 90, 6, 8, 192, 231, 233, 176, 6, 98, 534, 171, 205, 137, 221, 7]
+# serialized_data = serialize_integer_sequence(int_list)
+# deserialized_list = deserialize_integer_sequence(serialized_data)
+#
+# print(f"\nSerialized data: {serialized_data} with length: {len(serialized_data)}")
+# print("Deserialized list:", deserialized_list)
+#
+# from common.huffman import Huffman
+# huffman = Huffman()
+# dta = b'\n#__export__.temp_log_196134_bd201015\x12\nRoom Admin\x1a\x06\x08\xab\xcd\x89\xdd\x07 \x1d'
+# e, b = huffman.encode(dta)
+# print(f'\n {e}')
+# print(len(dta))
+# print((len(e) + 7) // 8)
+
+
+
